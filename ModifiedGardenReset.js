@@ -3,6 +3,7 @@ Garden = Game.Objects['Farm'].minigame;
 currentResets = 0;
 CheckForReset = function()
 		{
+			console.log("Called Check")
 			if (currentResets != Garden.convertTimes)
 			{
 				MaturationTime();
@@ -13,20 +14,29 @@ CheckForReset = function()
 			}
 		}
 
+
+GetBaseMaturation = function()
+		{
+			console.log("Called Matur");
+			for (let i = 0; i < 34; i++) {
+				Garden.plantsById[i].baseMature = Garden.plantsById[i].matureBase;
+			} 
+		}
+
 MaturationTime = function()
 		{
-			mult=0.95 ** Garden.convertTimes;
 			for (var i in Garden.plants)
 			{
-				Garden.plants[i].mature=Garden.plants[i].matureBase*mult;
-				console.log(Garden.plants[i].mature);
+				Garden.plants[i].matureBase = Garden.plants[i].baseMature * 0.95 ** Garden.convertTimes;
+				Garden.computeMatures();
+				Garden.buildPlot();
 			}
 		}		
 
 GetBaseStrength = function()
 		{
-		for (let i = 0; i < 5; i++) {
-			Garden.soilsById[i].baseEffMult = Garden.soilsById[i].effMult;
+			for (let i = 0; i < 5; i++) {
+				Garden.soilsById[i].baseEffMult = Garden.soilsById[i].effMult;
 			} 
 		}
 
@@ -34,15 +44,16 @@ GetBaseStrength = function()
 EffectStrenght = function()
 		{
 			for (let i = 0; i < 5; i++) {
-			Garden.soilsById[Garden.soil].effMult = Garden.soilsById[Garden.soil].baseEffMult * 1.05 ** Garden.convertTimes;
-			}
+				Garden.soilsById[Garden.soil].effMult = Garden.soilsById[Garden.soil].baseEffMult * 1.05 ** Garden.convertTimes;
+				console.log(Garden.soilsById[Garden.soil].effMult);
+				}
 		}
 
 GetBaseCost = function()
 		{
-		for (let i = 0; i < 34; i++) {
-			Garden.plantsById[i].baseCost = Garden.plantsById[i].cost;
-			} 
+			for (let i = 0; i < 34; i++) {
+				Garden.plantsById[i].baseCost = Garden.plantsById[i].cost;
+				} 
 		}
 		
 Cost = function()
@@ -54,8 +65,10 @@ Cost = function()
 
 Game.registerMod("Modified Garden Resets", {
 init: function () {
-Game.registerHook('check', CheckForReset);
+GetBaseMaturation();
 GetBaseStrength();
 GetBaseCost();
+CheckForReset();
+Game.registerHook('check', CheckForReset);
 }
 });
