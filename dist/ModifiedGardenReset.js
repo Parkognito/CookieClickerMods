@@ -1,5 +1,5 @@
 Garden = Game.Objects['Farm'].minigame;
-computeBoostPlotOriginal = Garden.computeBoostPlot
+computeBoostPlotOriginal = Garden.computeBoostPlot;
 currentResets = 0;
 CheckForReset = function()
 		{
@@ -25,7 +25,6 @@ EffectStrenght = function()
 		{
 			for (let i = 0; i < 5; i++) {
 				Garden.soilsById[Garden.soil].effMult = Garden.soilsById[Garden.soil].baseEffMult * 1.05 ** Garden.convertTimes;
-				console.log(Garden.soilsById[Garden.soil].effMult);
 				}
 		}
 
@@ -60,7 +59,7 @@ OverwriteBoost = function()
 					var plant=Garden.plantsById[tile[0]-1];
 					if (tile[1]<plant.mature)
 						{
-							Garden.plotBoost[y][x][0] *= 1.05 ** (Garden.convertTimes -1 )
+							Garden.plotBoost[y][x][0] *= 1.05 ** (Garden.convertTimes -1 );
 						}
 				}
 			}
