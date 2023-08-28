@@ -6,7 +6,7 @@ CheckForReset = function()
 		{
 			if (currentResets != Garden.convertTimes)
 			{
-				boost = 0.95 ** (Math.max(Garden.convertTimes) - 1, 0)
+				boost = 0.95 ** Math.max((Garden.convertTimes) - 1, 0)
 				Cost();
 				EffectStrenght();
 				currentResets = Garden.convertTimes;
