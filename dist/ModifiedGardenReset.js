@@ -1,10 +1,12 @@
 Garden = Game.Objects['Farm'].minigame;
-computeBoostPlotOriginal = Garden.computeBoostPlot;
-currentResets = 0;
+computeBoostPlotOriginal = Garden.computeBoostPlot
+currentResets = -1;
+
 CheckForReset = function()
 		{
 			if (currentResets != Garden.convertTimes)
 			{
+				boost = 0.95 ** (Math.max(Garden.convertTimes) - 1, 0)
 				Cost();
 				EffectStrenght();
 				currentResets = Garden.convertTimes;
@@ -58,48 +60,52 @@ OverwriteBoost = function()
 					var tile=Garden.plot[y][x];
 					var plant=Garden.plantsById[tile[0]-1];
 					if (tile[1]<plant.mature)
-						{
-							Garden.plotBoost[y][x][0] *= 1.05 ** (Garden.convertTimes -1 );
-						}
+					{
+						Garden.plotBoost[y][x][0] *= 1/ boost
+					}
+					else
+					{
+						Garden.plotBoost[y][x][0] *= (100 - plant.mature) / (100 - plant.mature * boost)
+					}
 				}
 			}
 		}
 	}
 }
 
-
-Garden.getPlantDesc=function(me)
-{
-	var children='';
-	if (me.children.length>0)
-	{
-		children+='<div class="shadowFilter" style="display:inline-block;">';
-		for (var i in me.children)
+		Garden.getPlantDesc=function(me)
 		{
-			if (!Garden.plants[me.children[i]]) console.log('No plant named '+me.children[i]);
-			else
+			var children='';
+			if (me.children.length>0)
 			{
-				var it=Garden.plants[me.children[i]];
-				if (it.unlocked) children+='<div class="gardenSeedTiny" style="background-position:'+(-0*48)+'px '+(-it.icon*48)+'px;"></div>';
-				else children+='<div class="gardenSeedTiny" style="background-image:url('+Game.resPath+'img/icons.png?v='+Game.version+');background-position:'+(-0*48)+'px '+(-7*48)+'px;opacity:0.35;"></div>';
+				children+='<div class="shadowFilter" style="display:inline-block;">';
+				for (var i in me.children)
+				{
+					if (!Garden.plants[me.children[i]]) console.log('No plant named '+me.children[i]);
+					else
+					{
+						var it=Garden.plants[me.children[i]];
+						if (it.unlocked) children+='<div class="gardenSeedTiny" style="background-position:'+(-0*48)+'px '+(-it.icon*48)+'px;"></div>';
+						else children+='<div class="gardenSeedTiny" style="background-image:url('+Game.resPath+'img/icons.png?v='+Game.version+');background-position:'+(-0*48)+'px '+(-7*48)+'px;opacity:0.35;"></div>';
+					}
+				}
+				children+='</div>';
 			}
+			var dragonBoost=1/(1+0.05*Game.auraMult('Supreme Intellect'));
+			return '<div class="description">'+
+						(!me.immortal?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Average lifespan:")+'</b> '+Game.sayTime(((100/(me.ageTick+me.ageTickR/2))*dragonBoost*Garden.stepT)*30,-1)+' <small>('+loc("%1 tick",LBeautify(Math.ceil((100/((me.ageTick+me.ageTickR/2)/dragonBoost))*(1))))+')</small></div>'):'')+
+						'<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Average maturation:")+'</b> '+Game.sayTime(((100/((me.ageTick+me.ageTickR/2)))*(me.mature*boost/100)*dragonBoost*Garden.stepT)*30,-1)+' <small>('+loc("%1 tick",LBeautify(Math.ceil((100/((me.ageTick+me.ageTickR/2)/dragonBoost))*(me.mature*boost/100))))+')</small></div>'+
+						(me.weed?'<div style="margin:6px 0px;font-size:11px;"><b>'+(EN?"Is a weed":loc("Weed"))+'</b></div>':'')+
+						(me.fungus?'<div style="margin:6px 0px;font-size:11px;"><b>'+(EN?"Is a fungus":loc("Fungus"))+'</b></div>':'')+
+						(me.detailsStr?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Details:")+'</b> '+me.detailsStr+'</div>'):'')+
+						(children!=''?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Possible mutations:")+'</b> '+children+'</div>'):'')+
+						'<div class="line"></div>'+
+						'<div style="margin:6px 0px;"><b>'+loc("Effects:")+'</b> <span style="font-size:11px;">('+loc("while plant is alive; scales with plant growth")+')</span></div>'+
+						'<div style="font-size:11px;font-weight:bold;">'+me.effsStr+'</div>'+
+						(me.q?('<q>'+me.q+'</q>'):'')+
+					'</div>';
 		}
-		children+='</div>';
-	}
-	var dragonBoost=1/(1+0.05*Game.auraMult('Supreme Intellect'));
-	return '<div class="description">'+
-				(!me.immortal?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Average lifespan:")+'</b> '+Game.sayTime(((100/(me.ageTick+me.ageTickR/2))*dragonBoost*Garden.stepT)*30,-1)+' <small>('+loc("%1 tick",LBeautify(Math.ceil((100/((me.ageTick+me.ageTickR/2)/dragonBoost))*(1))))+')</small></div>'):'')+
-				'<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Average maturation:")+'</b> '+Game.sayTime(((100/((me.ageTick+me.ageTickR/2)))*(me.mature/(100 * 1.05 ** (Garden.convertTimes -1)))*dragonBoost*Garden.stepT)*30,-1)+' <small>('+loc("%1 tick",LBeautify(Math.ceil((100/((me.ageTick+me.ageTickR/2)/dragonBoost))*(me.mature/(100 * 1.05 ** (Garden.convertTimes-1))))))+')</small></div>'+
-				(me.weed?'<div style="margin:6px 0px;font-size:11px;"><b>'+(EN?"Is a weed":loc("Weed"))+'</b></div>':'')+
-				(me.fungus?'<div style="margin:6px 0px;font-size:11px;"><b>'+(EN?"Is a fungus":loc("Fungus"))+'</b></div>':'')+
-				(me.detailsStr?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Details:")+'</b> '+me.detailsStr+'</div>'):'')+
-				(children!=''?('<div style="margin:6px 0px;font-size:11px;"><b>'+loc("Possible mutations:")+'</b> '+children+'</div>'):'')+
-				'<div class="line"></div>'+
-				'<div style="margin:6px 0px;"><b>'+loc("Effects:")+'</b> <span style="font-size:11px;">('+loc("while plant is alive; scales with plant growth")+')</span></div>'+
-				'<div style="font-size:11px;font-weight:bold;">'+me.effsStr+'</div>'+
-				(me.q?('<q>'+me.q+'</q>'):'')+
-			'</div>';
-}
+
 
 
 Game.registerMod("Modified Garden Resets", {
