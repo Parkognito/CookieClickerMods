@@ -37,13 +37,13 @@ GetOfflineTime = function()
 	offlineTime = (Date.now()- Game.lastDate)/60000;
 	soilTickrate = Garden.soilsById[Garden.soil].tick;
 	ticksToRun = Math.min(Math.floor(offlineTime / soilTickrate), 1500);
-	if (Garden.freeze == 0)
+	if (Garden.freeze == 0 && ticksToRun != 0)
 	{
 		message = "Your garden is catching up " + ticksToRun.toString() + " ticks";
 		Game.Notify('Offline Garden', message, [2,18]);
 		Game.registerHook('logic', Grow);
 	}
-	else
+	if (Garden.freeze == 1)
 	{
 		Game.Notify('Offline Garden', "Garden was freezed: No ticks have been caught up", [2,18]);
 	}
