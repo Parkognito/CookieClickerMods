@@ -1,0 +1,3 @@
+# CookieClickerMods
+
+Some cool mods
