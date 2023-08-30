@@ -26,7 +26,7 @@ GetBaseStrength = function()
 EffectStrenght = function()
 		{
 			for (let i = 0; i < 5; i++) {
-				Garden.soilsById[Garden.soil].effMult = Garden.soilsById[Garden.soil].baseEffMult * 1.05 ** Garden.convertTimes;
+				Garden.soilsById[i].effMult = Garden.soilsById[i].baseEffMult * 1.05 ** Garden.convertTimes;
 				}
 		}
 
