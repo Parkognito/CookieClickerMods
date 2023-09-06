@@ -23,6 +23,7 @@ WinAchievement = function()
 		if (Game.wrinklersPopped >= 5000 && isWon != 1 )
 		{
 			Game.Win("Wrinkler Genocide")
+			isWon = 1
 		}
 		
 		if (isWon == 1)
